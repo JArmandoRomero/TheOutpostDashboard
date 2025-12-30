@@ -24,7 +24,7 @@ jobs:
       - name: Build admin dashboard
         run: npm run build
 
-      # 🔐 Setup SSH (EXACT SAME PATTERN AS BACKEND)
+      # 🔐 Setup SSH (matches backend pipeline)
       - name: Setup SSH
         run: |
           mkdir -p ~/.ssh
@@ -35,9 +35,17 @@ jobs:
       # 🧹 Clear old admin build
       - name: Clear admin directory
         run: |
-          ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "rm -rf /var/www/admin/*"
+          ssh -i ~/.ssh/id_ed25519 \
+              -o IdentitiesOnly=yes \
+              -o StrictHostKeyChecking=yes \
+              ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} \
+              "rm -rf /var/www/admin/*"
 
       # 🚀 Deploy new build
       - name: Deploy admin build
         run: |
-          scp -r dist/* ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:/var/www/admin
+          scp -i ~/.ssh/id_ed25519 \
+              -o IdentitiesOnly=yes \
+              -o StrictHostKeyChecking=yes \
+              -r dist/* \
+              ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:/var/www/admin
