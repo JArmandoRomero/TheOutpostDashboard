@@ -1,13 +1,20 @@
-import { createContext, useContext, useState } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 import { apiFetch } from "../utils/api";
 
 const AuthContext = createContext(null);
 
 export function AuthProvider({ children }) {
-  const [user, setUser] = useState(() => {
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  // 🔁 Load auth from storage ONCE
+  useEffect(() => {
     const stored = localStorage.getItem("auth");
-    return stored ? JSON.parse(stored) : null;
-  });
+    if (stored) {
+      setUser(JSON.parse(stored));
+    }
+    setLoading(false);
+  }, []);
 
   // 🔐 LOGIN
   const login = async (email, password) => {
@@ -16,14 +23,6 @@ export function AuthProvider({ children }) {
         method: "POST",
         body: JSON.stringify({ email, password })
       });
-
-      /*
-        Expected response:
-        {
-          token: "...",
-          user: { id, email, role, firstName, lastName }
-        }
-      */
 
       const authData = {
         token: data.token,
@@ -49,7 +48,7 @@ export function AuthProvider({ children }) {
   };
 
   return (
-    <AuthContext.Provider value={{ user, login, logout }}>
+    <AuthContext.Provider value={{ user, loading, login, logout }}>
       {children}
     </AuthContext.Provider>
   );
