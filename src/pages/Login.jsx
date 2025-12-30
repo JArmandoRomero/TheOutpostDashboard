@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
-
+import logo from "../assets/images/branding/logoBlue.svg"
 export default function Login() {
   const { login } = useAuth();
   const navigate = useNavigate();
@@ -34,7 +34,8 @@ export default function Login() {
         className="bg-white p-8 rounded-xl shadow w-full max-w-md"
       >
         <h1 className="text-2xl font-bold mb-6 text-center">
-          Admin Login
+          <img src={logo}/>
+   
         </h1>
 
         {error && (
