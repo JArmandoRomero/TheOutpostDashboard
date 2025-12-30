@@ -13,18 +13,6 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Setup Node
-        uses: actions/setup-node@v4
-        with:
-          node-version: 18
-
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Build admin dashboard
-        run: npm run build
-
-      # 🔐 Setup SSH (matches backend pipeline)
       - name: Setup SSH
         run: |
           mkdir -p ~/.ssh
@@ -32,20 +20,17 @@ jobs:
           chmod 600 ~/.ssh/id_ed25519
           ssh-keyscan -H ${{ secrets.SSH_HOST }} >> ~/.ssh/known_hosts
 
-      # 🧹 Clear old admin build
-      - name: Clear admin directory
+      - name: Deploy Admin Dashboard
         run: |
-          ssh -i ~/.ssh/id_ed25519 \
-              -o IdentitiesOnly=yes \
-              -o StrictHostKeyChecking=yes \
-              ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} \
-              "rm -rf /var/www/admin/*"
+          ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} << 'EOF'
+            set -e
 
-      # 🚀 Deploy new build
-      - name: Deploy admin build
-        run: |
-          scp -i ~/.ssh/id_ed25519 \
-              -o IdentitiesOnly=yes \
-              -o StrictHostKeyChecking=yes \
-              -r dist/* \
-              ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:/var/www/admin
+            cd /var/www/TheOutpostDashboard
+
+            git pull origin main
+            npm install
+            npm run build
+
+            rm -rf /var/www/admin/*
+            cp -r dist/* /var/www/admin
+          EOF
