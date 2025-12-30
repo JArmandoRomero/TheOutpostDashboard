@@ -23,12 +23,12 @@ jobs:
       - name: Build admin dashboard
         run: npm run build
 
-      # 🔐 Write SSH key to a file (CRITICAL STEP)
+      # 🔐 Write SSH key to file (ABSOLUTE PATH)
       - name: Setup SSH key
         run: |
-          mkdir -p ~/.ssh
-          echo "${{ secrets.SSH_KEY }}" > ~/.ssh/github_actions_ci
-          chmod 600 ~/.ssh/github_actions_ci
+          mkdir -p /home/runner/.ssh
+          echo "${{ secrets.SSH_KEY }}" > /home/runner/.ssh/github_actions_ci
+          chmod 600 /home/runner/.ssh/github_actions_ci
 
       # 🧹 Clear admin directory
       - name: Clear admin directory
@@ -37,7 +37,7 @@ jobs:
           host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USER }}
           port: ${{ secrets.SSH_PORT }}
-          key_path: ~/.ssh/github_actions_ci
+          key_path: /home/runner/.ssh/github_actions_ci
           script: |
             rm -rf /var/www/admin/*
 
@@ -48,7 +48,7 @@ jobs:
           host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USER }}
           port: ${{ secrets.SSH_PORT }}
-          key_path: ~/.ssh/github_actions_ci
+          key_path: /home/runner/.ssh/github_actions_ci
           source: "dist/*"
           target: "/var/www/admin"
           strip_components: 1
