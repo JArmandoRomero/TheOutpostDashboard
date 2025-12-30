@@ -3,6 +3,8 @@ import { useUser } from "../context/UserContext";
 import { useAuth } from "../context/AuthContext";
 
 export default function Navbar() {
+  const PUBLIC_SITE =
+  import.meta.env.VITE_PUBLIC_SITE_URL || "https://www.theoutposttravel.com";
   const { profile, loading } = useUser();
   const { logout } = useAuth();
   const navigate = useNavigate();
@@ -13,7 +15,7 @@ export default function Navbar() {
 
   const handleLogout = () => {
     logout();          // clear auth + storage
-    navigate("/login"); // redirect to login page
+     window.location.href = PUBLIC_SITE; // redirect to login page
   };
 
   return (
