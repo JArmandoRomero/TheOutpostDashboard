@@ -1,19 +1,29 @@
-import { createContext, useContext, useState, useEffect } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 import { apiFetch } from "../utils/api";
+import { useAuth } from "./AuthContext";
 
-const UserContext = createContext();
+const UserContext = createContext(null);
 
 export function UserProvider({ children }) {
-  const [profile, setProfile] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const { user: auth, loading: authLoading } = useAuth();
 
-  // 🔁 Load user profile on app start
+  const [profile, setProfile] = useState(null);
+  const [loading, setLoading] = useState(false);
+
   useEffect(() => {
+    // ⛔ Wait until auth is resolved
+    if (authLoading) return;
+
+    // ⛔ Not logged in → do NOT call API
+    if (!auth?.token) {
+      setProfile(null);
+      return;
+    }
+
     const loadProfile = async () => {
       try {
-        const data = await apiFetch(
-          "/api/users/me"
-        );
+        setLoading(true);
+        const data = await apiFetch("/api/users/me");
         setProfile(data);
       } catch (err) {
         console.warn("Profile load failed:", err.message);
@@ -24,15 +34,10 @@ export function UserProvider({ children }) {
     };
 
     loadProfile();
-  }, []);
+  }, [authLoading, auth]);
 
   return (
-    <UserContext.Provider
-      value={{
-        profile,
-        loading
-      }}
-    >
+    <UserContext.Provider value={{ profile, loading }}>
       {children}
     </UserContext.Provider>
   );
