@@ -35,7 +35,4 @@ jobs:
           ssh-keyscan -H ${{ secrets.SSH_HOST }} >> ~/.ssh/known_hosts
 
       - name: Deploy to server
-        run: |
-          rsync -az --delete \
-          dist/ \
-          ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:/var/www/admin/
+        run: rsync -az --delete dist/ ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:/var/www/admin/
