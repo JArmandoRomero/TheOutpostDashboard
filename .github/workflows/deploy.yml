@@ -36,3 +36,5 @@ jobs:
 
       - name: Deploy to server
         run: rsync -az --delete dist/ ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:/var/www/admin/
+
+        
