@@ -1,4 +1,4 @@
-import { LayoutDashboard, Users, Settings } from 'lucide-react'
+import { LayoutDashboard, Users, Settings, ArchiveX } from 'lucide-react'
 import { NavLink } from 'react-router-dom'
 
 export default function Sidebar() {
@@ -7,6 +7,7 @@ export default function Sidebar() {
       <div className="p-6 text-xl font-bold">Outpost Travel</div>
       <nav className="flex-1 space-y-2 px-4">
         <NavItem to="/" icon={<LayoutDashboard />} label="Dashboard" />
+        <NavItem to="/articles" icon={<ArchiveX />} label="Articles" />
         <NavItem to="/users" icon={<Users />} label="Users" />
         <NavItem to="/settings" icon={<Settings />} label="Settings" />
       </nav>
