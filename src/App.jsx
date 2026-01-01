@@ -3,6 +3,9 @@ import { AuthProvider } from "./context/AuthContext";
 import { UserProvider } from "./context/UserContext";
 import ProtectedRoute from "./components/ProtectedRoute";
 import AdminLayout from "./components/AdminLayout";
+import Submissions from './pages/Submissions';
+import SubmissionDetail from './pages/SubmissionDetail';
+import Forms from './pages/Forms';
 
 import Dashboard from "./pages/Dashboard";
 import Users from "./pages/Users";
@@ -48,6 +51,10 @@ export default function App() {
               <Route path="users" element={<Users />} />
               <Route path="articles" element={<Articles />} />
               <Route path="settings" element={<Settings />} />
+              <Route path="forms" element={<Forms />} />
+              <Route path="submissions" element={<Submissions />} />
+              <Route path="submissions/:id" element={<SubmissionDetail />} />
+
             </Route>
           </Routes>
 

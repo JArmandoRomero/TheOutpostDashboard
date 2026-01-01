@@ -1,12 +1,16 @@
-import { Navigate } from "react-router-dom";
+import { Navigate, Outlet } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 
 export default function ProtectedRoute({ children }) {
-  const { user } = useAuth();
+  const { user, loading } = useAuth();
 
-  if (!user) {
+  // ⏳ Wait for auth to hydrate
+  if (loading) return null; // or spinner
+
+  // 🔒 Not authenticated
+  if (!user?.token) {
     return <Navigate to="/login" replace />;
   }
 
-  return children;
+  return children ?? <Outlet />;
 }

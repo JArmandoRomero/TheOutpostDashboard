@@ -8,13 +8,21 @@ export function AuthProvider({ children }) {
   const [loading, setLoading] = useState(true);
 
   // 🔁 Load auth from storage ONCE
-  useEffect(() => {
+useEffect(() => {
+  try {
     const stored = localStorage.getItem("auth");
     if (stored) {
-      setUser(JSON.parse(stored));
+      const parsed = JSON.parse(stored);
+      if (parsed?.token) {
+        setUser(parsed);
+      }
     }
+  } catch {
+    localStorage.removeItem("auth");
+  } finally {
     setLoading(false);
-  }, []);
+  }
+}, []);
 
   // 🔐 LOGIN
   const login = async (email, password) => {
